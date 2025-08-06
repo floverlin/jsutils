@@ -1,14 +1,14 @@
-import type { Result } from "./types.ts"
-
-function tryCatcher<T, I extends unknown[]>(
-    func: (...args: I) => T,
-    ...args: I
-): Result<T>
+import type { Result, ResultErr, ResultOK } from "./types.ts"
 
 function tryCatcher<T, I extends unknown[]>(
     func: (...args: I) => Promise<T>,
     ...args: I
 ): Promise<Result<T>>
+
+function tryCatcher<T, I extends unknown[]>(
+    func: (...args: I) => T,
+    ...args: I
+): Result<T>
 
 function tryCatcher<T, I extends unknown[]>(
     func: (...args: I) => T | Promise<T>,
@@ -18,10 +18,8 @@ function tryCatcher<T, I extends unknown[]>(
         const resultValue = func(...args)
         if (resultValue instanceof Promise) {
             return resultValue
-                .then((value) => [value, null])
-                .catch((error: unknown) => wrapError(error)) as Promise<
-                Result<T>
-            >
+                .then((value): ResultOK<T> => [value, null])
+                .catch((error: unknown) => wrapError(error))
         }
         return [resultValue, null]
     } catch (error: unknown) {
@@ -29,7 +27,7 @@ function tryCatcher<T, I extends unknown[]>(
     }
 }
 
-function wrapError(error: unknown): [null, Error] {
+function wrapError(error: unknown): ResultErr {
     const message = error instanceof Error ? error.message : String(error)
     return [null, new Error(message, { cause: error })]
 }
