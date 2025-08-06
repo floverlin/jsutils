@@ -1,9 +1,11 @@
-import type { Result, ResultErr, ResultOK } from "./types.ts"
+import PromiseResult from "./PromiseResult.ts"
+import Result from "./Result.ts"
+import type { ResultErr } from "./types.ts"
 
 function tryCatcher<T, I extends unknown[]>(
     func: (...args: I) => Promise<T>,
     ...args: I
-): Promise<Result<T>>
+): PromiseResult<T>
 
 function tryCatcher<T, I extends unknown[]>(
     func: (...args: I) => T,
@@ -13,17 +15,19 @@ function tryCatcher<T, I extends unknown[]>(
 function tryCatcher<T, I extends unknown[]>(
     func: (...args: I) => T | Promise<T>,
     ...args: I
-): Result<T> | Promise<Result<T>> {
+): Result<T> | PromiseResult<T> {
     try {
         const resultValue = func(...args)
         if (resultValue instanceof Promise) {
-            return resultValue
-                .then((value): ResultOK<T> => [value, null])
-                .catch((error: unknown) => wrapError(error))
+            return new PromiseResult(
+                resultValue
+                    .then((value) => new Result([value, null]))
+                    .catch((error: unknown) => new Result<T>(wrapError(error)))
+            )
         }
-        return [resultValue, null]
+        return new Result([resultValue, null])
     } catch (error: unknown) {
-        return wrapError(error)
+        return new Result<T>(wrapError(error))
     }
 }
 
