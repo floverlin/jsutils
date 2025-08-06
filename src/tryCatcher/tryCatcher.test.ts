@@ -27,6 +27,14 @@ Deno.test("tryCatcher sync success: calls onSuccess", () => {
     assertEquals(calledValue, 15, "onSuccess should receive 15")
 })
 
+Deno.test("tryCatcher sync success await: calls onSuccessAwait", async () => {
+    let calledValue: number | undefined
+    await tryCatcher(syncFn, 10, "5").onSuccessAwait(async (value) => {
+        calledValue = await asyncFn(value, "5")
+    })
+    assertEquals(calledValue, 20, "onSuccess should receive 20")
+})
+
 Deno.test("tryCatcher sync error: returns Result with error", () => {
     const result = tryCatcher(syncFn, 5, "a")
     assertInstanceOf(result, Result, "Result should be instance of Result")
@@ -68,6 +76,14 @@ Deno.test("tryCatcher async success: calls onSuccess", async () => {
         calledValue = value
     })
     assertEquals(calledValue, 15, "onSuccess should receive 15")
+})
+
+Deno.test("tryCatcher async success await: calls onSuccessAwait", async () => {
+    let calledValue: number | undefined
+    await tryCatcher(asyncFn, 10, "5").onSuccessAwait(async (value) => {
+        calledValue = await asyncFn(value, "5")
+    })
+    assertEquals(calledValue, 20, "onSuccess should receive 20")
 })
 
 Deno.test(
