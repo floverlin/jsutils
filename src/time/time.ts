@@ -40,6 +40,6 @@ class Time {
     }
 
     toString(): string {
-        return `class Time: n = ${this.#n}`
+        return `class 'Time' {n: ${this.#n}}`
     }
 }
