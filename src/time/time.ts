@@ -13,15 +13,17 @@ const timeDefMany = {
     days: Day,
 }
 
-type TimeDefSingleMany = keyof typeof timeDefSingleMany
-const timeDefSingleMany = {
+type TimeDefSingle = keyof typeof timeDefSingle
+const timeDefSingle = {
     millisecond: Millisecond,
     second: Second,
     minute: Minute,
     hour: Hour,
     day: Day,
-    ...timeDefMany,
 }
+
+type TimeDefSingleMany = TimeDefSingle | TimeDefMany
+const timeDefSingleMany = { ...timeDefMany, ...timeDefSingle }
 
 export default function time(n: number, def: TimeDefSingleMany): Time {
     return new Time(n * timeDefSingleMany[def])
