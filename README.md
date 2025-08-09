@@ -12,6 +12,17 @@ deno:
 deno add jsr:@flover/jsutils
 ```
 
+# Новый инструмент - time
+
+```javascript
+import { time } from "@flover/jsutils";
+
+setInterval(
+  () => console.log("Flower lover over Lynn"),
+  time(5, "seconds").in("milliseconds") // вернет ЦЕЛОЕ число
+);
+```
+
 # Использование
 
 ```javascript
@@ -39,11 +50,11 @@ const [result, error] = await tryCatcher(myAsyncFunction, ...functionArgs)
 Методы `onSuccessAwait` и `onErrorAwait` позволяют дождаться выполнения переданной им асинхронной функции, но не могут быть применены в цепи:
 
 ```javascript
-const result = tryCatcher(mySyncFunction, ...functionArgs)
-await result.onSuccessAwait(async (val) => await anotherAsyncFunction(val))
-await result.onErrorAwait(async (err) => await anotherAsyncFunction(err))
+const result = tryCatcher(mySyncFunction, ...functionArgs);
+await result.onSuccessAwait(async (val) => await anotherAsyncFunction(val));
+await result.onErrorAwait(async (err) => await anotherAsyncFunction(err));
 
-const result = tryCatcher(myAsyncFunction, ...functionArgs)  // применяем без await, если кортеж не нужен
-await result.onSuccessAwait(async (val) => await anotherAsyncFunction(val))
-await result.onErrorAwait(async (err) => await anotherAsyncFunction(err))
+const result = tryCatcher(myAsyncFunction, ...functionArgs); // применяем без await, если кортеж не нужен
+await result.onSuccessAwait(async (val) => await anotherAsyncFunction(val));
+await result.onErrorAwait(async (err) => await anotherAsyncFunction(err));
 ```
